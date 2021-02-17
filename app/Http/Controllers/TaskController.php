@@ -5,19 +5,28 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TaskFormRequest;
 use App\Models\Folder;
 use App\Models\Task;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
+/**
+ * Class TaskController
+ * @package App\Http\Controllers
+ */
 class TaskController extends Controller
 {
     /**
-     * タスク一覧
-     * @return \Illuminate\View\View
+     * 全部のタスク一覧
+     *
+     * @return Application|Factory|View|\Illuminate\Contracts\View\View
      */
     public function all()
     {
-        // ユーザーのフォルダを取得する
+        // ユーザーのフォルダを取得
         $folders = Folder::all();
 
-        // 選ばれたフォルダに紐づくタスクを取得する
+        // 選ばれたフォルダに紐づくタスクを取得
         $tasks = Task::all();
 
         return view('tasks.index', [
@@ -28,11 +37,12 @@ class TaskController extends Controller
     }
 
     /**
-     * タスク一覧
+     * フォルダのタスク一覧
+     *
      * @param Folder $folder
-     * @return \Illuminate\View\View
+     * @return Application|Factory|View|\Illuminate\Contracts\View\View
      */
-    public function folder(Folder $folder)
+    public function folder(Folder $folder): View
     {
         // ユーザーのフォルダを取得する
         $folders = Folder::all();
@@ -49,10 +59,11 @@ class TaskController extends Controller
 
     /**
      * タスク作成フォーム
+     *
      * @param Folder $folder
-     * @return \Illuminate\View\View
+     * @return Application|Factory|View|\Illuminate\Contracts\View\View
      */
-    public function showCreateForm(Folder $folder)
+    public function showCreateForm(Folder $folder): View
     {
         return view('tasks.create', [
             'folder' => $folder,
@@ -63,14 +74,15 @@ class TaskController extends Controller
      * タスク作成
      * @param Folder $folder
      * @param TaskFormRequest $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
-    public function create(Folder $folder, TaskFormRequest $request)
+    public function create(Folder $folder, TaskFormRequest $request): RedirectResponse
     {
+        // タスクを作成
         $task = new Task();
         $task->title = $request->title;
         $task->due_date = $request->due_date;
-
+        // フォルダのタスクとして保存
         $folder->tasks()->save($task);
 
         return redirect()->route('tasks.index', [
@@ -80,11 +92,12 @@ class TaskController extends Controller
 
     /**
      * タスク編集フォーム
+     *
      * @param Folder $folder
      * @param Task $task
-     * @return \Illuminate\View\View
+     * @return Application|Factory|View|\Illuminate\Contracts\View\View
      */
-    public function showEditForm(Folder $folder, Task $task)
+    public function showEditForm(Folder $folder, Task $task): View
     {
         $this->checkRelation($folder, $task);
 
@@ -96,15 +109,18 @@ class TaskController extends Controller
 
     /**
      * タスク編集
+     *
      * @param Folder $folder
      * @param Task $task
      * @param TaskFormRequest $request
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
-    public function edit(Folder $folder, Task $task, TaskFormRequest $request)
+    public function edit(Folder $folder, Task $task, TaskFormRequest $request): RedirectResponse
     {
+        // フォルダとタスクの関連性をチェック
         $this->checkRelation($folder, $task);
 
+        // タスクを編集＆保存
         $task->title = $request->title;
         $task->status = $request->status;
         $task->due_date = $request->due_date;
@@ -116,7 +132,8 @@ class TaskController extends Controller
     }
 
     /**
-     * フォルダとタスクの関連性があるか調べる
+     * フォルダとタスクの関連性をチェック
+     *
      * @param Folder $folder
      * @param Task $task
      */

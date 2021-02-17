@@ -6,6 +6,7 @@ Route::get('/', 'HomeController@index')->name('home');
 
 Route::get('/folders/create', 'FolderController@showCreateForm')->name('folders.create');
 Route::post('/folders/create', 'FolderController@create');
+Route::get('/folders/{folder}/remove', 'FolderController@remove')->name('folder.remove');
 
 
 Route::get('/tasks', 'TaskController@all')->name('tasks.all');

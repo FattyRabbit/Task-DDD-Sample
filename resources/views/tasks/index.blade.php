@@ -11,18 +11,31 @@
                             フォルダを追加する
                         </a>
                     </div>
-                    <div class="list-group">
-                        <a href="{{ route('tasks.all') }}"
-                            class="list-group-item {{ !isset($current_folder_id) ? 'active' : '' }}">
-                            全部
-                        </a>
-                        @foreach($folders as $folder)
-                            <a href="{{ route('tasks.index', ['folder' => $folder->id]) }}"
-                                class="list-group-item {{ $current_folder_id === $folder->id ? 'active' : '' }}">
-                                {{ $folder->title }}
-                            </a>
-                        @endforeach
+                    <div class="row list-group" style="margin-left: 0px; margin-right: 0px;">
+                        <div class="list-group-item {{ !isset($current_folder_id) ? 'active' : '' }}" style="display: flex;">
+                            <div class="col-sm-12 text-left">
+                                <a href="{{ route('tasks.all') }}">
+                                    全部
+                                </a>
+                            </div>
+                        </div>
                     </div>
+                    @foreach($folders as $folder)
+                    <div class="row list-group" style="margin-left: 0px; margin-right: 0px;">
+                        <div class="list-group-item {{ $current_folder_id === $folder->id ? 'active' : '' }}" style="display: flex;">
+                            <div class="col-sm-9 text-left">
+                                <a href="{{ route('tasks.index', ['folder' => $folder->id]) }}">
+                                    {{ $folder->title }}
+                                </a>
+                            </div>
+                            <div class="col-sm-3 text-right">
+                                <a href="{{ route('folder.remove', ['folder' => $folder->id]) }}">
+                                    削除
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
                 </nav>
             </div>
             <div class="column col-md-8">
